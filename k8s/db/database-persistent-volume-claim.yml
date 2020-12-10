@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: PersistentVolumeClaim #not an actual instance of storage | its an advertisement for storage
+metadata:
+  name: database-persistent-volume-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi #uses default sc: standard (default) || k8s.io/minikube-hostpath

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-cluster-ip-service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5000 #other pods in cluster access via port
+      targetPort: 5000 #port on target object pod@component:server(access is being provided to)
+  selector:
+    component: server

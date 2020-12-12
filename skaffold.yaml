@@ -1,0 +1,38 @@
+apiVersion: skaffold/v2beta10
+kind: Config
+metadata:
+  name: multi-k8s
+build:
+  artifacts:
+    - image: lilmakijr/multi-client-k8s
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync: #using mode:2(injecting updated files into client pods) - DockerVolumes in kubernetes
+        infer: [ "**/*.js", "**/*.css", "**/*.html" ] #if changes are made to anything outside of sync mode:1 is initiated
+    - image: lilmakijr/multi-server-k8s
+      context: server
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        infer: [ "**/*.js" ] #synced artifacts need to be able to restart themselves
+    - image: lilmakijr/multi-worker-k8s
+      context: worker
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        infer: [ "**/*.js" ]
+deploy:
+  kubectl:
+    manifests:
+      - k8s/client/client-cluster-ip-service.yml
+      - k8s/client/client-deployment.yml
+      - k8s/config/ingress-service.yml
+      - k8s/db/database-persistent-volume-claim.yml
+      - k8s/db/postgres-cluster-ip-service.yml
+      - k8s/db/postgres-deployment.yml
+      - k8s/redis/redis-cluster-ip-service.yml
+      - k8s/redis/redis-deployment.yml
+      - k8s/server/server-cluster-ip-service.yml
+      - k8s/server/server-deployment.yml
+      - k8s/worker/worker-deployment.yml
